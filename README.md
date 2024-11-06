@@ -17,7 +17,7 @@
 
 </div>
 
-<img src="./core/assets/preview.png" width="100%" alt="Screenshot of KomoGUI">
+<img src="./app/assets/preview.png" width="100%" alt="Screenshot of KomoGUI">
 
 ## Installation
 
