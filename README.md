@@ -24,7 +24,7 @@
 ### Winget
 Install the latest version using:
 ``` pwsh
-winget install --id AmN.komogui
+winget install --id AmN.KomoGUI
 ``` 
 
 ### .msi Installer
