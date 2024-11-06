@@ -26,7 +26,7 @@ jobs:
 
       - uses: vedantmgoyal9/winget-releaser@main
         with:
-          identifier: AmN.yasb
+          identifier: AmN.komogui
           version: ${{ steps.get-version.outputs.version }}
           release-tag: ${{ steps.get-version.outputs.release-tag }}
           installers-regex: '\.msi$'
