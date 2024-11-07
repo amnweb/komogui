@@ -35,6 +35,18 @@ def general_widget():
         config_id="window_hiding_behaviour"
     )
     general_layout.add_dropdown_layout(
+        'Window container behaviour', 
+        'Determine what happens when a new window is opened', 
+        ["Create","Append"], 
+        config_id="window_container_behaviour"
+    )
+    general_layout.add_dropdown_layout(
+        'Unmanaged window operation behaviour', 
+        'Determine what happens when commands are sent while an unmanaged window is in the foreground', 
+        ["Op","NoOp"], 
+        config_id="unmanaged_window_operation_behaviour"
+    )
+    general_layout.add_dropdown_layout(
         'Cross monitor move behaviour', 
         'Determine what happens when a window is moved across a monitor boundary', 
         ["Swap","Insert","NoOp"],
@@ -58,5 +70,35 @@ def general_widget():
         True,
         config_id="mouse_follows_focus"
     )
-     
+    general_layout.add_checkbox_layout(
+        'Float override', 
+        'Enable or disable float override, which makes it so every new window opens in floating mode', 
+        False,
+        config_id="float_override"
+    )
+    
+    general_layout.add_options_layout(
+        'Global offset top', 
+        'Global work area (space used for tiling) offset', 
+        0, 0, 120,
+        config_id="global_work_area_offset.top"
+    )
+    general_layout.add_options_layout(
+        'Global offset bottom', 
+        'Global work area (space used for tiling) offset', 
+        0, 0, 120,
+        config_id="global_work_area_offset.bottom"
+    )
+    general_layout.add_options_layout(
+        'Global offset left', 
+        'Global work area (space used for tiling) offset', 
+        0, 0, 120,
+        config_id="global_work_area_offset.left"
+    )
+    general_layout.add_options_layout(
+        'Global offset right', 
+        'Global work area (space used for tiling) offset', 
+        0, 0, 120,
+        config_id="global_work_area_offset.right"
+    )
     return general_layout
