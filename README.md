@@ -37,3 +37,5 @@ Download the latest portable version from the [Releases](https://github.com/amnw
 
 Once installed or extracted, run the application, when you first run the application click  on the load button to load the current configuration of Komorebi, then you can start customizing your desktop environment.
 
+> **Warning:** 
+> The application is still in development and may contain bugs, please report any issues you encounter. Please backup backup your Komorebi configuration before using the application.
