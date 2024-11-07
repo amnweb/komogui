@@ -8,6 +8,9 @@ from core.interface.layout.transparency import transparency_widget
 from core.interface.layout.general import general_widget
 from core.interface.layout.stackbar import stackbar_widget
 from core.interface.components.ignore_rules import ignore_rules_widget
+from core.interface.components.manage_rules import manage_rules_widget
+from core.interface.components.floating_applications import floating_applications_widget
+from core.interface.components.layered_applications import layered_applications_widget
 from core.interface.components.workspace import workspace_widget
 from core.interface.windows.about import about_widget
 from core.interface.components.sidebar import Sidebar
@@ -69,6 +72,9 @@ class MainWindow(QWidget):
             ('Stackbar Configuration', stackbar_widget),
             ('Transparency Configuration', transparency_widget),
             ('Ignore Rules Configuration', ignore_rules_widget),
+            ('Manage Rules Configuration', manage_rules_widget),
+            ('Floating Applications Configuration', floating_applications_widget),
+            ('Layered Applications Configuration', layered_applications_widget),
             ('Workspaces Configuration', workspace_widget),
             ('', about_widget)
         ]

@@ -31,7 +31,7 @@ class Sidebar(QWidget):
         sidebar_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
        # Options for the sidebar
-        options = ['General','Animation', 'Borders', 'Stackbar', 'Transparency', 'Ignore Rules','Workspaces']
+        options = ['General','Animation', 'Borders', 'Stackbar', 'Transparency', 'Ignore Rules','Manage Rules','Floating Apps','Layered Apps','Workspaces']
         self.labels = []
         for index, file_name in enumerate(options):
             label = QLabel(file_name)
@@ -78,7 +78,7 @@ class Sidebar(QWidget):
         
     def load_about_page(self):
         self.clear_active_background()
-        index = 8  # Use a unique index for the "About" button
+        index = 11  # Use a unique index for the "About" button
         self.parent().on_sidebar_label_click(index, None)
 
     def set_sidebar_items_enabled(self, enabled):
