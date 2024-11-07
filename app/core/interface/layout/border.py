@@ -39,8 +39,7 @@ def border_widget():
         True,
         config_id="border"
     )
-    
-    # Border implementation settings
+ 
     border_layout.add_dropdown_layout(
         'Border implementation', 
         'Active window border implementation', 
@@ -61,15 +60,19 @@ def border_widget():
         8, 0, 24,
         config_id="border_width"
     )
-    
+    border_layout.add_dropdown_layout(
+        'Border z-order', 
+        'Active window border z-order ', 
+        ["System","Top","NoTopMost","Bottom","TopMost"],
+        config_id="border_z_order"
+    )
     border_layout.add_options_layout(
         'Border offset', 
         'Offset of the window border', 
         0, -10, 24,
         config_id="border_offset"
     )
-    
-    # Border colors section
+ 
     border_layout.add_colorbox_layout(
         'Single', 
         'Colour when the container contains a single window', 
