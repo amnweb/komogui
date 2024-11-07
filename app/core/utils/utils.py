@@ -1,4 +1,3 @@
-# utils.py
 from PyQt6.QtWidgets import QVBoxLayout, QWidget, QLabel, QFileDialog, QApplication, QMessageBox
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt

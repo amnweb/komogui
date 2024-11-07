@@ -1,4 +1,3 @@
-# sidebar.py
 from PyQt6.QtWidgets import QVBoxLayout, QWidget, QLabel, QPushButton, QSpacerItem, QSizePolicy
 from PyQt6.QtCore import Qt
 from core.interface.styles.styles import Styles

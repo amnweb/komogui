@@ -1,4 +1,3 @@
-# core/options/transparency.py
 from PyQt6.QtWidgets import QVBoxLayout, QWidget
 from core.interface.components.button import ButtonLayout
 from core.interface.components.checkbox import CheckboxLayout
