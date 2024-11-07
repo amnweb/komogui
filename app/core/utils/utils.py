@@ -86,7 +86,7 @@ def generate_config(parent_widget, widget_factories):
     ignore_rules_map = {}
     other_configs = {}
     
-    # Process all widgets and collect configs
+    # Process widgets
     for widget in QApplication.instance().allWidgets():
         if not (hasattr(widget, 'config_id') and widget.config_id and hasattr(widget, 'get_value')):
             continue
@@ -117,17 +117,10 @@ def generate_config(parent_widget, widget_factories):
             print(f"Error processing config_id {config_id}: {e}")
             continue
 
-    # Build final config with ordered sections
-    final_config = OrderedDict([
-        ("$schema", "https://raw.githubusercontent.com/LGUG2Z/komorebi/master/schema.json"),
-        ("app_specific_configuration_path", "$Env:USERPROFILE/.config/applications.json")
-    ])
+    # Return processed config
+    config = OrderedDict(sorted(other_configs.items(), key=lambda x: x[0]))
     
-    # Sort and add other configs
-    sorted_configs = OrderedDict(sorted(other_configs.items(), key=lambda x: x[0]))
-    final_config.update(sorted_configs)
-    
-    # Add monitors with sorted workspaces
+    # Add monitors
     if monitors:
         monitor_list = []
         for monitor_id in sorted(monitors.keys()):
@@ -141,9 +134,9 @@ def generate_config(parent_widget, widget_factories):
                     })
             if workspace_list:
                 monitor_list.append({"workspaces": workspace_list})
-        final_config["monitors"] = monitor_list
+        config["monitors"] = monitor_list
     
-    # Add sorted ignore rules
+    # Add ignore rules
     if ignore_rules_map:
         rules_list = []
         for rule_id in sorted(ignore_rules_map.keys()):
@@ -154,9 +147,9 @@ def generate_config(parent_widget, widget_factories):
                     'matching_strategy': rule['matching_strategy'],
                     'id': rule['id']
                 })
-        final_config["ignore_rules"] = rules_list
+        config["ignore_rules"] = rules_list
         
-    return final_config
+    return config
 
 
  
@@ -164,6 +157,11 @@ def generate_config(parent_widget, widget_factories):
 class Dialogs():
     def __init__(self):
         self.config_path = None  
+
+        self.original_config_values = {
+            "$schema": None,
+            "app_specific_configuration_path": None
+        }
 
     def open_file_dialog(self):
         """Opens file dialog for JSON files and returns selected file path"""
@@ -179,6 +177,11 @@ class Dialogs():
                 try:
                     with open(self.config_path, 'r') as file:
                         self.config_data = json.load(file)
+                        if "$schema" in self.config_data:
+                            self.original_config_values["$schema"] = self.config_data["$schema"]
+                        if "app_specific_configuration_path" in self.config_data:
+                            self.original_config_values["app_specific_configuration_path"] = self.config_data["app_specific_configuration_path"]
+            
                     self.update_widgets()
                     signal_manager.ui_update.emit()
                     return selected_files[0]
@@ -198,7 +201,16 @@ class Dialogs():
         try:
             # Generate config first
             config = generate_config(parent_widget, widget_factories)
-
+            final_config = OrderedDict()
+            # Add preserved values at the top if they exist
+            if self.original_config_values["$schema"]:
+                final_config["$schema"] = self.original_config_values["$schema"]
+            if self.original_config_values["app_specific_configuration_path"]:
+                final_config["app_specific_configuration_path"] = self.original_config_values["app_specific_configuration_path"]
+                
+            # Add the rest of the config
+            final_config.update(config)
+            
             if show_dialog:
                 # Create file dialog
                 file_dialog = QFileDialog()
@@ -217,10 +229,10 @@ class Dialogs():
                 else:
                     # No existing path - force dialog
                     return self.save_file_dialog(parent_widget, widget_factories, True)
-            
+             
             # Save config to path
             with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2)
+                json.dump(final_config, f, indent=2)
                 
             # Store path for future saves
             self.config_path = file_path
