@@ -83,6 +83,9 @@ def convert_value(value):
 def generate_config(parent_widget, widget_factories):
     monitors = {}
     ignore_rules_map = {}
+    manage_rules_map = {}
+    floating_applications_map = {}
+    layered_applications_map = {}
     other_configs = {}
     
     # Process widgets
@@ -94,6 +97,10 @@ def generate_config(parent_widget, widget_factories):
         value = widget.get_value()
         
         try:
+            # Skip some keys and values
+            if config_id == 'border_z_order' and str(value) == 'System':
+                continue
+            
             if config_id.startswith('monitors-'):
                 monitor_num, workspace_num, property_name = process_monitor_config(config_id, value)
                 monitors.setdefault(monitor_num, {"workspaces": {}})
@@ -104,6 +111,21 @@ def generate_config(parent_widget, widget_factories):
                 rule_num, property_name = process_ignore_rule(config_id, value)
                 ignore_rules_map.setdefault(rule_num, {})
                 ignore_rules_map[rule_num][property_name] = value
+                
+            elif config_id.startswith('manage_rules-'):
+                rule_num, property_name = process_ignore_rule(config_id, value)
+                manage_rules_map.setdefault(rule_num, {})
+                manage_rules_map[rule_num][property_name] = value
+            
+            elif config_id.startswith('floating_applications-'):
+                rule_num, property_name = process_ignore_rule(config_id, value)
+                floating_applications_map.setdefault(rule_num, {})
+                floating_applications_map[rule_num][property_name] = value
+                
+            elif config_id.startswith('layered_applications-'):
+                rule_num, property_name = process_ignore_rule(config_id, value)
+                layered_applications_map.setdefault(rule_num, {})
+                layered_applications_map[rule_num][property_name] = value
                 
             else:
                 current = other_configs
@@ -148,6 +170,42 @@ def generate_config(parent_widget, widget_factories):
                 })
         config["ignore_rules"] = rules_list
         
+    if manage_rules_map:
+        rules_list = []
+        for rule_id in sorted(manage_rules_map.keys()):
+            rule = manage_rules_map[rule_id]
+            if all(key in rule for key in ['kind', 'matching_strategy', 'id']):
+                rules_list.append({
+                    'kind': rule['kind'],
+                    'matching_strategy': rule['matching_strategy'],
+                    'id': rule['id']
+                })
+        config["manage_rules"] = rules_list
+        
+    if floating_applications_map:
+        rules_list = []
+        for rule_id in sorted(floating_applications_map.keys()):
+            rule = floating_applications_map[rule_id]
+            if all(key in rule for key in ['kind', 'matching_strategy', 'id']):
+                rules_list.append({
+                    'kind': rule['kind'],
+                    'matching_strategy': rule['matching_strategy'],
+                    'id': rule['id']
+                })
+        config["floating_applications"] = rules_list
+        
+    if layered_applications_map:
+        rules_list = []
+        for rule_id in sorted(layered_applications_map.keys()):
+            rule = layered_applications_map[rule_id]
+            if all(key in rule for key in ['kind', 'matching_strategy', 'id']):
+                rules_list.append({
+                    'kind': rule['kind'],
+                    'matching_strategy': rule['matching_strategy'],
+                    'id': rule['id']
+                })
+        config["layered_applications"] = rules_list
+        
     return config
 
 
@@ -174,7 +232,7 @@ class Dialogs():
                 self.config_path = selected_files[0]
  
                 try:
-                    with open(self.config_path, 'r') as file:
+                    with open(self.config_path, 'r', encoding='utf-8') as file:
                         self.config_data = json.load(file)
                         if "$schema" in self.config_data:
                             self.original_config_values["$schema"] = self.config_data["$schema"]
@@ -228,10 +286,11 @@ class Dialogs():
                 else:
                     # No existing path - force dialog
                     return self.save_file_dialog(parent_widget, widget_factories, True)
-             
-            # Save config to path
             with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(final_config, f, indent=2)
+                json.dump(final_config, f, indent=2, ensure_ascii=False)
+            # Save config to path
+            # with open(file_path, 'w', encoding='utf-8') as f:
+            #     json.dump(final_config, f, indent=2)
                 
             # Store path for future saves
             self.config_path = file_path
@@ -303,6 +362,54 @@ class Dialogs():
                     indexed_rules.append(indexed_rule)
                 signal_manager.ignore_rules_updated.emit(indexed_rules)
 
+        # Handle manage rules with indexed config IDs
+        if 'manage_rules' in self.config_data:
+            manage_rules = self.config_data['manage_rules']
+            if isinstance(manage_rules, list):
+                # Transform rules to include index
+                indexed_rules = []
+                for idx, rule in enumerate(manage_rules, 1):
+                    indexed_rule = {
+                        'kind': rule.get('kind'),
+                        'matching_strategy': rule.get('matching_strategy'),
+                        'id': rule.get('id'),
+                        'config_id_prefix': f'manage_rules-{idx}'
+                    }
+                    indexed_rules.append(indexed_rule)
+                signal_manager.manage_rules_updated.emit(indexed_rules)
+                
+        # Handle floating applications with indexed config IDs
+        if 'floating_applications' in self.config_data:
+            floating_applications = self.config_data['floating_applications']
+            if isinstance(floating_applications, list):
+                # Transform rules to include index
+                indexed_rules = []
+                for idx, rule in enumerate(floating_applications, 1):
+                    indexed_rule = {
+                        'kind': rule.get('kind'),
+                        'matching_strategy': rule.get('matching_strategy'),
+                        'id': rule.get('id'),
+                        'config_id_prefix': f'floating_applications-{idx}'
+                    }
+                    indexed_rules.append(indexed_rule)
+                signal_manager.floating_applications_updated.emit(indexed_rules)
+        
+        # Handle layered applications with indexed config IDs
+        if 'layered_applications' in self.config_data:
+            layered_applications = self.config_data['layered_applications']
+            if isinstance(layered_applications, list):
+                # Transform rules to include index
+                indexed_rules = []
+                for idx, rule in enumerate(layered_applications, 1):
+                    indexed_rule = {
+                        'kind': rule.get('kind'),
+                        'matching_strategy': rule.get('matching_strategy'),
+                        'id': rule.get('id'),
+                        'config_id_prefix': f'layered_applications-{idx}'
+                    }
+                    indexed_rules.append(indexed_rule)
+                signal_manager.layered_applications_updated.emit(indexed_rules)
+        
         # Handle workspaces
         if 'monitors' in self.config_data:
             monitors = self.config_data['monitors']
@@ -315,7 +422,10 @@ class Dialogs():
             if hasattr(widget, 'config_id') and widget.config_id:
                 # Skip special widgets with numbered rules
                 if not (widget.config_id.split('.')[0].startswith('ignore_rules-') or 
-                    widget.config_id.startswith('monitors')):
+                        widget.config_id.split('.')[0].startswith('manage_rules-') or
+                        widget.config_id.split('.')[0].startswith('floating_applications-') or
+                        widget.config_id.split('.')[0].startswith('layered_applications-') or
+                        widget.config_id.startswith('monitors')):
                     value = self.get_config_value(widget.config_id)
                     if value is not None:
                         self.set_widget_value(widget, value)

@@ -16,6 +16,9 @@ Instances:
 
 class SignalManager(QObject):
     ignore_rules_updated = pyqtSignal(list)
+    manage_rules_updated = pyqtSignal(list)
+    floating_applications_updated = pyqtSignal(list)
+    layered_applications_updated = pyqtSignal(list)
     workspace_monitors_updated = pyqtSignal(list)
     ui_update = pyqtSignal()
     value_changed = pyqtSignal()
