@@ -13,6 +13,7 @@ build_options = {
         ("assets/komorebi.png", "app/assets/komorebi.png"),
         ("assets/komorebi.ico", "app/assets/komorebi.ico"),
         ("assets/checkmark.png", "app/assets/checkmark.png"),
+        ("assets/chevron.png", "app/assets/chevron.png"),
     ]
 }
 directory_table = [

@@ -71,11 +71,11 @@ class MainWindow(QWidget):
             ('Border Configuration', border_widget),
             ('Stackbar Configuration', stackbar_widget),
             ('Transparency Configuration', transparency_widget),
+            ('Workspaces Configuration', workspace_widget),
             ('Ignore Rules Configuration', ignore_rules_widget),
             ('Manage Rules Configuration', manage_rules_widget),
             ('Floating Applications Configuration', floating_applications_widget),
             ('Layered Applications Configuration', layered_applications_widget),
-            ('Workspaces Configuration', workspace_widget),
             ('', about_widget)
         ]
 
@@ -95,7 +95,7 @@ class MainWindow(QWidget):
         label = self.sidebar.labels[index - 1]
         self.on_sidebar_label_click(index, label)
         self.sidebar.set_sidebar_items_enabled(True)
-
+        
     def on_sidebar_label_click(self, index, label):
         self.stacked_widget.setCurrentIndex(index)
         self.active_label = display_content(
